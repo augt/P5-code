@@ -10,6 +10,7 @@ fetch("http://localhost:3000/api/products")
       for (let sofa of sofas) {
         let productCard = document.createElement("a");
         document.querySelector("#items").appendChild(productCard);
+        productCard.setAttribute("href", "product.html?id=" + sofa._id)
 
         let productArticle = document.createElement("article");
         productCard.appendChild(productArticle);
@@ -34,6 +35,6 @@ fetch("http://localhost:3000/api/products")
     .catch(function(err) {
         document
         .getElementById("items")
-        .innerText = "Une erreur est survenue lors du chargement des articles en vente. C'est une bonne occasion pour économiser votre argent";
+        .innerText = "Une erreur est survenue lors du chargement des articles en vente. C'est une bonne occasion pour économiser votre argent !";
     });
     
