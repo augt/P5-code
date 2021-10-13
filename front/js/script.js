@@ -5,15 +5,35 @@ fetch("http://localhost:3000/api/products")
         return res.json();
       }
     })
-    .then(function(value) {
-      document
-          .getElementById("items")
-          .innerText = value;
-    console.log(value);
+    .then(function(apiResults) {
+      const sofas = apiResults;
+      for (let sofa of sofas) {
+        let productCard = document.createElement("a");
+        document.querySelector("#items").appendChild(productCard);
+
+        let productArticle = document.createElement("article");
+        productCard.appendChild(productArticle);
+
+        let productPicture = document.createElement("img");
+        productArticle.appendChild(productPicture);
+        productPicture.setAttribute("src", sofa.imageUrl);
+        productPicture.setAttribute("alt", sofa.altTxt);
+
+        let productTitle = document.createElement("h3");
+        productArticle.appendChild(productTitle);
+        productTitle.classList.add("productName");
+        productTitle.innerText = sofa.name;
+
+        let productDescription= document.createElement("p");
+        productArticle.appendChild(productDescription);
+        productDescription.classList.add("productDescription");
+        productDescription.innerText = sofa.description ;
+
+      }
     })
     .catch(function(err) {
         document
         .getElementById("items")
-        .innerText = "Une erreur est survenue han, revenez plus tard han 🤷";
+        .innerText = "Une erreur est survenue lors du chargement des articles en vente. C'est une bonne occasion pour économiser votre argent";
     });
     
