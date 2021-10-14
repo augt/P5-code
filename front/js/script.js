@@ -1,5 +1,8 @@
+let protocol ="http";
+let domain = "localhost:3000"
 
-fetch("http://localhost:3000/api/products")
+
+fetch( protocol + "://" + domain + "/api/products/")
     .then(function(res) {
       if (res.ok) {
         return res.json();
@@ -10,7 +13,7 @@ fetch("http://localhost:3000/api/products")
       for (let sofa of sofas) {
         let productCard = document.createElement("a");
         document.querySelector("#items").appendChild(productCard);
-        productCard.setAttribute("href", "product.html?id=" + sofa._id)
+        productCard.setAttribute("href", "product.html?id=" + sofa._id);
 
         let productArticle = document.createElement("article");
         productCard.appendChild(productArticle);
