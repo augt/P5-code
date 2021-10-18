@@ -5,6 +5,10 @@ let protocol ="http";
 let domain = "localhost:3000";
 
 fetch( protocol + "://" + domain + "/api/products/" + id)
+    .catch ((error) => {
+      let container = document.querySelector(".item");
+      container.innerHTML = "<article>Nous n'avons pas réussi à afficher les articles.<br> <br>Avez-vous bien lancé le serveur local (Port 3000) ? <br><br>Si le problème persiste, contactez-nous.</article>";
+    })
     .then(function (response) {
       return response.json();
     })
@@ -37,8 +41,8 @@ fetch( protocol + "://" + domain + "/api/products/" + id)
 
         };
 
-
-
-      });
+    }
+    )
+    ;
 
     

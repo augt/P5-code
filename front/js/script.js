@@ -38,6 +38,6 @@ fetch( protocol + "://" + domain + "/api/products/")
     .catch(function(err) {
         document
         .getElementById("items")
-        .innerText = "Une erreur est survenue lors du chargement des articles en vente. C'est une bonne occasion pour économiser votre argent !";
+        .innerText = "Nous n'avons pas réussi à afficher les articles. Avez-vous bien lancé le serveur local (Port 3000) ?";
     });
     
