@@ -60,12 +60,14 @@ addToCartButton.addEventListener('click', function(){
     let arrayProductsInCart = [];
 
     let productAdded = {
-        id: id,
-        quantity: quantity.value,
-        color: colorsMenu.value,
+      id: id,
+      quantity: quantity.value,
+      color: colorsMenu.value,
 
     }
     
+    
+      // if local storage is emty, we set the array in it
 
     if (localStorage.getItem("products") == null){
 
@@ -73,15 +75,33 @@ addToCartButton.addEventListener('click', function(){
       localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
 
     } else {
+
+      // if there is already items in the local storage, then we extract the local storage in the array
+
+      arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
+
+      const product = arrayProductsInCart.findIndex(
+        (product) =>
+          product.id === productAdded.id && product.color === productAdded.color
+      );
+
+      if (product === -1) { // if an identical item isn't already present, then we add the new item to the array
+ 
+        arrayProductsInCart.push(productAdded);
+        localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+
+      } else { // if an identical item is already present in the local storage, then we increment the quantity of said item
+        arrayProductsInCart[product].quantity = parseInt(arrayProductsInCart[product].quantity) + parseInt(productAdded.quantity);
+        localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+
+
+      } 
       
-      arrayProductsInCart = JSON.parse(localStorage.getItem("products")); 
-      arrayProductsInCart.push(productAdded);
-      localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
     };
     
     
     console.log(arrayProductsInCart);
-    console.log(localStorage);
+        console.log(localStorage);
 
   }
 
