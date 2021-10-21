@@ -51,8 +51,6 @@ fetch( protocol + "://" + domain + "/api/products/" + id)
 // adding items to local storage
 
 
-
-
 addToCartButton.addEventListener('click', function(){
 
   if (quantity.value > 0 && colorsMenu.value !== "") {
