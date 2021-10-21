@@ -61,7 +61,7 @@ addToCartButton.addEventListener('click', function(){
 
     let productAdded = {
       id: id,
-      quantity: quantity.value,
+      quantity: parseInt(quantity.value),
       color: colorsMenu.value,
 
     }
@@ -80,6 +80,10 @@ addToCartButton.addEventListener('click', function(){
 
       arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
 
+      for (let item of arrayProductsInCart){
+        item.quantity = parseInt(item.quantity);
+      };
+
       const productIndex = arrayProductsInCart.findIndex(
         (product) =>
           product.id === productAdded.id && product.color === productAdded.color
@@ -91,7 +95,7 @@ addToCartButton.addEventListener('click', function(){
         localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
 
       } else { // if an identical item is already present in the local storage, then we increment the quantity of said item
-        arrayProductsInCart[productIndex].quantity = parseInt(arrayProductsInCart[productIndex].quantity) + parseInt(productAdded.quantity);
+        arrayProductsInCart[productIndex].quantity = arrayProductsInCart[productIndex].quantity + productAdded.quantity;
         localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
 
 
