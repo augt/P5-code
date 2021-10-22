@@ -9,6 +9,8 @@ const price = document.querySelector("#price");
 const colorsMenu = document.querySelector("#colors");
 const quantity = document.querySelector("#quantity");
 const addToCartButton = document.querySelector("#addToCart")
+const productPicture = document.createElement("img");
+
 
 // retrieve product informations and display it on the page
 
@@ -25,9 +27,10 @@ fetch( protocol + "://" + domain + "/api/products/" + id)
 
     document.title = sofa.name;
 
-    let productPicture = document.createElement("img");
+    
     document.querySelector(".item__img").appendChild(productPicture);
     productPicture.setAttribute("src", sofa.imageUrl);
+    productPicture.setAttribute("alt", sofa.altTxt);
 
     productName.innerText = sofa.name;
 
@@ -45,71 +48,87 @@ fetch( protocol + "://" + domain + "/api/products/" + id)
       colorOption.setAttribute("value", color);
       colorOption.innerText = color;
     };
-});
+
+    // adding items to local storage
 
 
-// adding items to local storage
+    addToCartButton.addEventListener('click', function(){
 
+      if (quantity.value > 0 && colorsMenu.value !== "") {
 
-addToCartButton.addEventListener('click', function(){
+        let arrayProductsInCart = [];
 
-  if (quantity.value > 0 && colorsMenu.value !== "") {
+        let productAdded = {
+          id: id,
+          quantity: parseInt(quantity.value),
+          color: colorsMenu.value,
+          price: sofa.price,
+          imageUrl: sofa.imageUrl,
+          altTxt: sofa.altTxt,
+          name: sofa.name
 
-    let arrayProductsInCart = [];
+        }
+        
+          // if local storage is emty, we set the array in it
 
-    let productAdded = {
-      id: id,
-      quantity: parseInt(quantity.value),
-      color: colorsMenu.value,
+        if (localStorage.getItem("products") == null){
 
-    }
+          arrayProductsInCart.push(productAdded);
+          localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+
+        } else {
+
+          // if there is already items in the local storage, then we extract the local storage in the array
+
+          arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
+
+          for (let item of arrayProductsInCart){
+            item.quantity = parseInt(item.quantity);
+          };
+
+          const productIndex = arrayProductsInCart.findIndex(
+            (product) =>
+              product.id === productAdded.id && product.color === productAdded.color
+          );
+
+          if (productIndex === -1) { // if an identical item isn't already present, then we add the new item to the array
     
-    
-      // if local storage is emty, we set the array in it
+            arrayProductsInCart.push(productAdded);
+            localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
 
-    if (localStorage.getItem("products") == null){
+          } else { // if an identical item is already present in the local storage, then we increment the quantity of said item
+            arrayProductsInCart[productIndex].quantity = arrayProductsInCart[productIndex].quantity + productAdded.quantity;
+            localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
 
-      arrayProductsInCart.push(productAdded);
-      localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+          } 
+          
+        };
+          
+        console.log(arrayProductsInCart);
+            console.log(localStorage);
 
-    } else {
-
-      // if there is already items in the local storage, then we extract the local storage in the array
-
-      arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
-
-      for (let item of arrayProductsInCart){
-        item.quantity = parseInt(item.quantity);
-      };
-
-      const productIndex = arrayProductsInCart.findIndex(
-        (product) =>
-          product.id === productAdded.id && product.color === productAdded.color
-      );
-
-      if (productIndex === -1) { // if an identical item isn't already present, then we add the new item to the array
- 
-        arrayProductsInCart.push(productAdded);
-        localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
-
-      } else { // if an identical item is already present in the local storage, then we increment the quantity of said item
-        arrayProductsInCart[productIndex].quantity = arrayProductsInCart[productIndex].quantity + productAdded.quantity;
-        localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
-
-
-      } 
-      
-    };
-    
-    
-    console.log(arrayProductsInCart);
-        console.log(localStorage);
-
-  }
+      }
 
   
 
 })
+
+
+
+
+
+
+
+
+
+
+
+
+    
+});
+
+
+
 
 
 
