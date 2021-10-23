@@ -4,6 +4,7 @@ let arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
 
 let arrayQuantities = [];
 let arrayItemsPrices =[];
+let reducer = (previousValue, currentValue) => previousValue + currentValue;
 
 for (item of arrayProductsInCart){
 
@@ -44,7 +45,7 @@ for (item of arrayProductsInCart){
 }
 
 //calculate total quantity of items and total price of cart
-let reducer = (previousValue, currentValue) => previousValue + currentValue;
+
 
 function displayCartBalance() {
     if (arrayQuantities.length !== 0) {    
@@ -64,6 +65,7 @@ function displayCartBalance() {
     };
 };
 displayCartBalance();
+
 
 
 // implementing delete button function
@@ -96,8 +98,57 @@ for (let deleteButton of deleteButtonsList) {
 
         displayCartBalance();
     })
-}
+};
 
+// implementing quantity setting button
+
+let quantityButtonsList = document.querySelectorAll('.itemQuantity');
+
+
+for (let quantityButton of quantityButtonsList){
+
+    quantityButton.addEventListener('change', function(){
+
+        let parentArticleTag = quantityButton.closest("article");
+        let dataID = parentArticleTag.getAttribute("data-id");
+
+        let colorTagParent = quantityButton.closest("article > div");
+        let colorTag = colorTagParent.getElementsByTagName("p")[0];
+
+        let productIndex = arrayProductsInCart.findIndex(
+            (product) =>
+              product.id === dataID && product.color === colorTag.innerHTML
+        );
+
+        arrayProductsInCart[productIndex].quantity = parseInt(quantityButton.value);
+
+        localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+
+        arrayQuantities[productIndex] = parseInt(quantityButton.value);
+        arrayItemsPrices[productIndex] = parseInt(quantityButton.value)*arrayProductsInCart[productIndex].price;
+
+        let priceTag = colorTagParent.getElementsByTagName("p")[1];
+
+        priceTag.innerHTML =  `${arrayItemsPrices[productIndex]} €`;
+
+        if (arrayQuantities.length !== 0) {    
+
+            let totalQuantityInCart = arrayQuantities.reduce(reducer);
+    
+            document.querySelector("#totalQuantity").innerHTML = totalQuantityInCart;
+    
+            let totalPriceOfCart = arrayItemsPrices.reduce(reducer);
+    
+            document.querySelector("#totalPrice").innerHTML = totalPriceOfCart;
+    
+        } else {
+            document.querySelector("#totalQuantity").innerHTML = 0;
+    
+            document.querySelector("#totalPrice").innerHTML = 0;
+        };
+
+    })
+};
 
 
 
