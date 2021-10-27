@@ -87,18 +87,19 @@ for (let deleteButton of deleteButtonsList) {
               product.id === dataID && product.color === colorTag.innerHTML
         );
 
-        arrayProductsInCart.pop(productIndex);
+        arrayProductsInCart.splice(productIndex,1);
+        console.log(productIndex)
 
         localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
 
+        arrayQuantities.splice(productIndex,1);
+        arrayItemsPrices.splice(productIndex,1);
+
         parentArticleTag.remove();
-
-        arrayQuantities.pop(productIndex);
-        arrayItemsPrices.pop(productIndex);
-
         displayCartBalance();
     })
 };
+
 
 // implementing quantity setting button
 
@@ -149,6 +150,134 @@ for (let quantityButton of quantityButtonsList){
 
     })
 };
+
+// creating validation functions for each form element
+
+// function regarding first name, last name and city inputs
+let firstNameInput = document.getElementById("firstName");
+let firstNameError = document.getElementById("firstNameErrorMsg");
+let lastNameInput = document.getElementById("lastName");
+let lastNameError = document.getElementById("lastNameErrorMsg");
+let cityInput= document.getElementById("city")
+let cityError= document.getElementById("cityErrorMsg")
+
+function testName(node, errorNode) {
+
+    if (/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/.test(node.value)) {
+
+        errorNode.innerText = "";
+        return true;
+
+    } else {
+
+        errorNode.innerText = "L'élément renseigné n'est pas conforme";   
+    }
+};
+
+// regarding email input
+
+let emailInput = document.getElementById("email");
+let emailError = document.getElementById("emailErrorMsg")
+
+
+function testEmail(){
+    if (/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(emailInput.value)){
+
+        emailError.innerText = "";
+        return true;
+    } else {
+        emailError.innerText = "l'adresse email renseignée est erronée";
+    }
+};
+
+// regarding adress input
+
+let addressInput = document.getElementById("address");
+let addressError = document.getElementById("addressErrorMsg")
+
+
+function testAdress(){
+    if (/^[-'a-zA-Z0-9À-ÖØ-öø-ÿ\s]{3,}$/.test(addressInput.value)){
+
+        addressError.innerText = "";
+        return true;
+    } else {
+        addressError.innerText = "l'adresse renseignée est erronée";
+    }
+};
+
+
+
+let orderButton = document.getElementById("order")
+
+orderButton.addEventListener("click", function (){
+    testName(firstNameInput, firstNameError);
+    testName(lastNameInput, lastNameError);
+    testName(cityInput, cityError);
+    testEmail();
+    testAdress();
+    event.preventDefault();
+    
+    if (testName(firstNameInput, firstNameError) && testName(lastNameInput, lastNameError) && testName(cityInput, cityError) && testEmail() && testAdress()) {
+        
+
+        let products = []
+
+        for (let item of JSON.parse(localStorage.getItem("products"))){
+
+            products.push(item.id)
+        };
+
+        console.log(products);
+        let commandToSend = {
+            contact: {
+              firstName: firstNameInput.value,
+              lastName: lastNameInput.value,
+              address: addressInput.value,
+              city: cityInput.value,
+              email: emailInput.value,
+            },
+            products,
+          };
+
+        console.log(commandToSend);
+
+        function send() {
+            fetch("http://localhost:3000/api/products/order", {
+              method: "POST",
+              headers: {
+                'Accept': 'application/json', 
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(commandToSend),
+              })
+            .then(function(res) {
+              if (res.ok) {
+                return res.json();
+              }
+            })
+            .then(function(value) {
+                console.log(value.orderId);
+            });
+        };
+        send()
+
+
+
+
+
+        console.log("cool")
+
+    } else{
+        console.log("pas cool")
+
+    };
+
+});
+
+
+
+
 
 
 
