@@ -1,3 +1,4 @@
+document.title = "Panier";
 // retrieve local storage into an array
 
 let arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
@@ -11,7 +12,7 @@ if (arrayProductsInCart !== null){
 
         let itemTotalPrice = item.price*item.quantity;
 
-        // display of cart products
+        // display cart products
         const cartContent = `<article class="cart__item" data-id="${item.id}">
             <div class="cart__item__img">
             <img src="${item.imageUrl}" alt="${item.altTxt}">
@@ -172,7 +173,7 @@ function testName(node, errorNode) {
 
     } else {
 
-        errorNode.innerText = "L'élément renseigné n'est pas conforme";   
+        errorNode.innerText = "L'élément renseigné n'est pas conforme.";   
     }
 };
 
@@ -188,7 +189,7 @@ function testEmail(){
         emailError.innerText = "";
         return true;
     } else {
-        emailError.innerText = "l'adresse email renseignée est erronée";
+        emailError.innerText = "L'adresse email renseignée est erronée.";
     }
 };
 
@@ -204,15 +205,17 @@ function testAdress(){
         addressError.innerText = "";
         return true;
     } else {
-        addressError.innerText = "l'adresse renseignée est erronée";
+        addressError.innerText = "L'adresse renseignée est erronée.";
     }
 };
 
-
+// sending order
 
 let orderButton = document.getElementById("order")
 
 orderButton.addEventListener("click", function (){
+
+    // excecuting each regex verification individually to display error messages if needed
     testName(firstNameInput, firstNameError);
     testName(lastNameInput, lastNameError);
     testName(cityInput, cityError);
@@ -220,13 +223,14 @@ orderButton.addEventListener("click", function (){
     testAdress();
     event.preventDefault();
     
+    // verrifying every input and creating data to send order
     if (testName(firstNameInput, firstNameError) && testName(lastNameInput, lastNameError) && testName(cityInput, cityError) && testEmail() && testAdress()) {
         
-        let products = []
+        let products = [];
 
         for (let item of JSON.parse(localStorage.getItem("products"))){
 
-            products.push(item.id)
+            products.push(item.id);
         };
 
         console.log(products);
