@@ -6,43 +6,45 @@ let arrayQuantities = [];
 let arrayItemsPrices =[];
 let reducer = (previousValue, currentValue) => previousValue + currentValue;
 
-for (item of arrayProductsInCart){
+if (arrayProductsInCart !== null){
+    for (item of arrayProductsInCart){
 
-    let itemTotalPrice = item.price*item.quantity;
+        let itemTotalPrice = item.price*item.quantity;
 
-    // display of cart products
-    const cartContent = `<article class="cart__item" data-id="${item.id}">
-        <div class="cart__item__img">
-        <img src="${item.imageUrl}" alt="${item.altTxt}">
-        </div>
-        <div class="cart__item__content">
-        <div class="cart__item__content__titlePrice">
-        <h2>${item.name}</h2>
-        <p>${item.color}</p>
-        <p>${itemTotalPrice} €</p>
-        </div>
-        <div class="cart__item__content__settings">
-        <div class="cart__item__content__settings__quantity">
-            <p>Qté :</p>
-            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${item.quantity}">
-        </div>
-        <div class="cart__item__content__settings__delete">
-            <p class="deleteItem">Supprimer</p>
-        </div>
-        </div>
-        </div>
-        </article>`;
-    document
-        .getElementById('cart__items')
-        .insertAdjacentHTML('beforeend', cartContent);
- 
-    //constitue arrays to calculate quantity of items and total price of cart
+        // display of cart products
+        const cartContent = `<article class="cart__item" data-id="${item.id}">
+            <div class="cart__item__img">
+            <img src="${item.imageUrl}" alt="${item.altTxt}">
+            </div>
+            <div class="cart__item__content">
+            <div class="cart__item__content__titlePrice">
+            <h2>${item.name}</h2>
+            <p>${item.color}</p>
+            <p>${itemTotalPrice} €</p>
+            </div>
+            <div class="cart__item__content__settings">
+            <div class="cart__item__content__settings__quantity">
+                <p>Qté :</p>
+                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${item.quantity}">
+            </div>
+            <div class="cart__item__content__settings__delete">
+                <p class="deleteItem">Supprimer</p>
+            </div>
+            </div>
+            </div>
+            </article>`;
+        document
+            .getElementById('cart__items')
+            .insertAdjacentHTML('beforeend', cartContent);
+    
+        //constitue arrays to calculate quantity of items and total price of cart
 
-    arrayQuantities.push(item.quantity);
+        arrayQuantities.push(item.quantity);
 
-    arrayItemsPrices.push(itemTotalPrice)
+        arrayItemsPrices.push(itemTotalPrice)
 
-}
+    };
+};
 
 //calculate total quantity of items and total price of cart
 
@@ -220,7 +222,6 @@ orderButton.addEventListener("click", function (){
     
     if (testName(firstNameInput, firstNameError) && testName(lastNameInput, lastNameError) && testName(cityInput, cityError) && testEmail() && testAdress()) {
         
-
         let products = []
 
         for (let item of JSON.parse(localStorage.getItem("products"))){
@@ -229,7 +230,7 @@ orderButton.addEventListener("click", function (){
         };
 
         console.log(products);
-        let commandToSend = {
+        let orderToSend = {
             contact: {
               firstName: firstNameInput.value,
               lastName: lastNameInput.value,
@@ -240,7 +241,7 @@ orderButton.addEventListener("click", function (){
             products,
           };
 
-        console.log(commandToSend);
+        console.log(orderToSend);
 
         function send() {
             fetch("http://localhost:3000/api/products/order", {
@@ -249,7 +250,7 @@ orderButton.addEventListener("click", function (){
                 'Accept': 'application/json', 
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify(commandToSend),
+              body: JSON.stringify(orderToSend),
               })
             .then(function(res) {
               if (res.ok) {
@@ -257,19 +258,14 @@ orderButton.addEventListener("click", function (){
               }
             })
             .then(function(value) {
-                console.log(value.orderId);
+                localStorage.clear();
+                window.location.href = "confirmation.html?id=" + value.orderId;
             });
         };
         send()
 
-
-
-
-
-        console.log("cool")
-
     } else{
-        console.log("pas cool")
+        console.log("erreur")
 
     };
 
