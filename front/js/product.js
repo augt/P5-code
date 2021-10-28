@@ -12,103 +12,118 @@ const addToCartButton = document.querySelector("#addToCart")
 const productPicture = document.createElement("img");
 
 
-// retrieve product informations and display it on the page
 
-fetch( protocol + "://" + domain + "/api/products/" + id)
-  .catch ((error) => {
-    let container = document.querySelector(".item");
-    container.innerHTML = "<article>Nous n'avons pas réussi à afficher les articles.<br> <br>Avez-vous bien lancé le serveur local (Port 3000) ? <br><br>Si le problème persiste, contactez-nous.</article>";
-  })
-  .then(function (response) {
-    return response.json();
-  })
-  .then(function(apiResults) {
-    const sofa = apiResults;
+fetchData();
 
-    document.title = sofa.name;
+function fetchData(){
 
-    
-    document.querySelector(".item__img").appendChild(productPicture);
-    productPicture.setAttribute("src", sofa.imageUrl);
-    productPicture.setAttribute("alt", sofa.altTxt);
+  // retrieve product informations and display it on the page
 
-    productName.innerText = sofa.name;
+  fetch( protocol + "://" + domain + "/api/products/" + id)
+    .catch ((error) => {
+      let container = document.querySelector(".item");
+      container.innerHTML = "<article>Nous n'avons pas réussi à afficher les articles.<br> <br>Avez-vous bien lancé le serveur local (Port 3000) ? <br><br>Si le problème persiste, contactez-nous.</article>";
+    })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function(apiResults) {
 
-    price.innerText = sofa.price;
+      const sofa = apiResults;
 
-    let productDescription = document.querySelector("#description");
-    productDescription.innerText = sofa.description;
+      // layout product infos in the DOM
 
-    let colors= sofa.colors;
-    for (let color of colors){
+      displayProductInfos();
 
-          
-      let colorOption = document.createElement("option");
-      colorsMenu.appendChild(colorOption);
-      colorOption.setAttribute("value", color);
-      colorOption.innerText = color;
-    };
+      function displayProductInfos(){
 
-    // adding items to local storage
+        document.title = sofa.name;
 
-
-    addToCartButton.addEventListener('click', function(){
-
-      if (quantity.value > 0 && colorsMenu.value !== "") {
-
-        let arrayProductsInCart = [];
-
-        let productAdded = {
-          id: id,
-          quantity: parseInt(quantity.value),
-          color: colorsMenu.value,
-          price: sofa.price,
-          imageUrl: sofa.imageUrl,
-          altTxt: sofa.altTxt,
-          name: sofa.name
-
-        };
         
-          // if local storage is emty, we set the array in it
+        document.querySelector(".item__img").appendChild(productPicture);
+        productPicture.setAttribute("src", sofa.imageUrl);
+        productPicture.setAttribute("alt", sofa.altTxt);
 
-        if (localStorage.getItem("products") == null){
+        productName.innerText = sofa.name;
 
-          arrayProductsInCart.push(productAdded);
-          localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+        price.innerText = sofa.price;
 
-        } else {
+        let productDescription = document.querySelector("#description");
+        productDescription.innerText = sofa.description;
 
-          // if there is already items in the local storage, then we extract the local storage in the array
+        let colors= sofa.colors;
+        for (let color of colors){
 
-          arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
-
-          for (let item of arrayProductsInCart){
-            item.quantity = parseInt(item.quantity);
-          };
-
-          const productIndex = arrayProductsInCart.findIndex(
-            (product) =>
-              product.id === productAdded.id && product.color === productAdded.color
-          );
-
-          if (productIndex === -1) { // if an identical item isn't already present, then we add the new item to the array
-    
-            arrayProductsInCart.push(productAdded);
-            localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
-
-          } else { // if an identical item is already present in the local storage, then we increment the quantity of said item
-            arrayProductsInCart[productIndex].quantity = arrayProductsInCart[productIndex].quantity + productAdded.quantity;
-            localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
-
-          };
-          
+              
+          let colorOption = document.createElement("option");
+          colorsMenu.appendChild(colorOption);
+          colorOption.setAttribute("value", color);
+          colorOption.innerText = color;
         };
-        console.log(arrayProductsInCart);
-        console.log(localStorage);
-      }; 
-    });
-  })
-;
+      };
+
+      // adding items to local storage
+
+      addToCart();
+
+      function addToCart(){
+
+        addToCartButton.addEventListener('click', function(){
+
+          if (quantity.value > 0 && colorsMenu.value !== "") {
+
+            let arrayProductsInCart = [];
+
+            let productAdded = {
+              id: id,
+              quantity: parseInt(quantity.value),
+              color: colorsMenu.value,
+              price: sofa.price,
+              imageUrl: sofa.imageUrl,
+              altTxt: sofa.altTxt,
+              name: sofa.name
+
+            };
+            
+              // if local storage is empty, we set the array in it
+
+            if (localStorage.getItem("products") == null){
+
+              arrayProductsInCart.push(productAdded);
+              localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+
+            } else {
+
+              // if there is already items in the local storage, then we extract the local storage in the array
+
+              arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
+
+              for (let item of arrayProductsInCart){
+                item.quantity = parseInt(item.quantity);
+              };
+
+              const productIndex = arrayProductsInCart.findIndex(
+                (product) =>
+                  product.id === productAdded.id && product.color === productAdded.color
+              );
+
+              if (productIndex === -1) { // if an identical item isn't already present, then we add the new item to the array
+        
+                arrayProductsInCart.push(productAdded);
+                localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+
+              } else { // if an identical item is already present in the local storage, then we increment the quantity of said item
+                arrayProductsInCart[productIndex].quantity = arrayProductsInCart[productIndex].quantity + productAdded.quantity;
+                localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+
+              };
+            };
+          }; 
+        });
+      };
+    })
+  ;
+};
 
 
 

@@ -10,52 +10,58 @@ let arrayQuantities = [];
 let arrayItemsPrices =[];
 
 // display each product in cart
+displayCartElements();
 
-if (arrayProductsInCart !== null){
+function displayCartElements(){
 
-    for (let item of arrayProductsInCart){
+    if (arrayProductsInCart !== null){
 
-        let itemTotalPrice = item.price*item.quantity;
+        for (let item of arrayProductsInCart){
 
-        const cartContent = 
-            `<article class="cart__item" data-id="${item.id}">
-                <div class="cart__item__img">
-                    <img src="${item.imageUrl}" alt="${item.altTxt}">
-                </div>
-                <div class="cart__item__content">
-                    <div class="cart__item__content__titlePrice">
-                        <h2>${item.name}</h2>
-                        <p>${item.color}</p>
-                        <p>${itemTotalPrice} €</p>
+            let itemTotalPrice = item.price*item.quantity;
+
+            const cartContent = 
+                `<article class="cart__item" data-id="${item.id}">
+                    <div class="cart__item__img">
+                        <img src="${item.imageUrl}" alt="${item.altTxt}">
                     </div>
-                    <div class="cart__item__content__settings">
-                        <div class="cart__item__content__settings__quantity">
-                            <p>Qté :</p>
-                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${item.quantity}">
+                    <div class="cart__item__content">
+                        <div class="cart__item__content__titlePrice">
+                            <h2>${item.name}</h2>
+                            <p>${item.color}</p>
+                            <p>${itemTotalPrice} €</p>
                         </div>
-                        <div class="cart__item__content__settings__delete">
-                        <p class="deleteItem">Supprimer</p>
+                        <div class="cart__item__content__settings">
+                            <div class="cart__item__content__settings__quantity">
+                                <p>Qté :</p>
+                                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${item.quantity}">
+                            </div>
+                            <div class="cart__item__content__settings__delete">
+                            <p class="deleteItem">Supprimer</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </article>`;
+                </article>`;
 
-        document
-            .getElementById('cart__items')
-            .insertAdjacentHTML('beforeend', cartContent);
-    
-        // fill in arrays to calculate quantity of items and total price of cart
+            document
+                .getElementById('cart__items')
+                .insertAdjacentHTML('beforeend', cartContent);
+        
+            // fill in arrays to calculate quantity of items and total price of cart
 
-        arrayQuantities.push(item.quantity);
+            arrayQuantities.push(item.quantity);
 
-        arrayItemsPrices.push(itemTotalPrice);
+            arrayItemsPrices.push(itemTotalPrice);
 
+        };
     };
 };
 
 //calculate total quantity of items and total price of cart
 
 let reducer = (previousValue, currentValue) => previousValue + currentValue;
+
+displayCartBalance();
 
 function displayCartBalance() {
     if (arrayQuantities.length !== 0) {    
@@ -75,107 +81,121 @@ function displayCartBalance() {
     };
 };
 
-displayCartBalance();
-
-
 // implement delete button function
 
-let deleteButtonsList = document.querySelectorAll('.deleteItem');
+deleteProduct();
 
-for (let deleteButton of deleteButtonsList) {
+function deleteProduct(){
 
-    deleteButton.addEventListener('click', function(){
+    let deleteButtonsList = document.querySelectorAll('.deleteItem');
 
-        //target necessary DOM elements
+    for (let deleteButton of deleteButtonsList) {
 
-        let parentArticleTag = deleteButton.closest("article");
-        let dataID = parentArticleTag.getAttribute("data-id");
+        deleteButton.addEventListener('click', function(){
 
-        let colorParagraphTagParent = deleteButton.closest("article > div");
-        let colorParagraphTag = colorParagraphTagParent.getElementsByTagName("p")[0];
+            //target necessary DOM elements
 
-        // remove deleted item from arrays and update local storage
+            let parentArticleTag = deleteButton.closest("article");
+            let dataID = parentArticleTag.getAttribute("data-id");
 
-        let productIndex = arrayProductsInCart.findIndex(
-            (product) =>
-              product.id === dataID && product.color === colorParagraphTag.innerHTML
-        );
+            let colorParagraphTagParent = deleteButton.closest("article > div");
+            let colorParagraphTag = colorParagraphTagParent.getElementsByTagName("p")[0];
 
-        arrayProductsInCart.splice(productIndex,1);
+            // remove deleted item from arrays and update local storage
 
-        localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+            let productIndex = arrayProductsInCart.findIndex(
+                (product) =>
+                product.id === dataID && product.color === colorParagraphTag.innerHTML
+            );
 
-        arrayQuantities.splice(productIndex,1);
-        arrayItemsPrices.splice(productIndex,1);
+            arrayProductsInCart.splice(productIndex,1);
 
-        // update HTML code consequently
+            localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
 
-        parentArticleTag.remove();
+            arrayQuantities.splice(productIndex,1);
+            arrayItemsPrices.splice(productIndex,1);
 
-        displayCartBalance();
-    })
+            // update HTML code consequently
+
+            parentArticleTag.remove();
+
+            displayCartBalance();
+        })
+    };
 };
-
 
 // implement quantity setting button
 
-let quantityButtonsList = document.querySelectorAll('.itemQuantity');
+modifyQuantity();
+
+function modifyQuantity(){
+
+    let quantityButtonsList = document.querySelectorAll('.itemQuantity');
 
 
-for (let quantityButton of quantityButtonsList){
+    for (let quantityButton of quantityButtonsList){
 
-    quantityButton.addEventListener('change', function(){
+        quantityButton.addEventListener('change', function(){
 
-        //target necessary DOM elements
+            //target necessary DOM elements
 
-        let parentArticleTag = quantityButton.closest("article");
-        let dataID = parentArticleTag.getAttribute("data-id");
+            let parentArticleTag = quantityButton.closest("article");
+            let dataID = parentArticleTag.getAttribute("data-id");
 
-        let colorParagraphTagParent = quantityButton.closest("article > div");
-        let colorParagraphTag = colorParagraphTagParent.getElementsByTagName("p")[0];
+            let colorParagraphTagParent = quantityButton.closest("article > div");
+            let colorParagraphTag = colorParagraphTagParent.getElementsByTagName("p")[0];
 
-        // modify arrays to update quantities and price
+            // modify arrays to update quantities and price
 
-        let productIndex = arrayProductsInCart.findIndex(
-            (product) =>
-              product.id === dataID && product.color === colorParagraphTag.innerHTML
-        );
+            let productIndex = arrayProductsInCart.findIndex(
+                (product) =>
+                product.id === dataID && product.color === colorParagraphTag.innerHTML
+            );
 
-        arrayProductsInCart[productIndex].quantity = parseInt(quantityButton.value);
+            arrayProductsInCart[productIndex].quantity = parseInt(quantityButton.value);
 
-        localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+            localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
 
-        arrayQuantities[productIndex] = parseInt(quantityButton.value);
-        arrayItemsPrices[productIndex] = parseInt(quantityButton.value)*arrayProductsInCart[productIndex].price;
+            arrayQuantities[productIndex] = parseInt(quantityButton.value);
+            arrayItemsPrices[productIndex] = parseInt(quantityButton.value)*arrayProductsInCart[productIndex].price;
 
-        // update HTML code consequently
+            // update HTML code consequently
 
-        let priceTag = colorParagraphTagParent.getElementsByTagName("p")[1];
+            let priceTag = colorParagraphTagParent.getElementsByTagName("p")[1];
 
-        priceTag.innerHTML =  `${arrayItemsPrices[productIndex]} €`;   
+            priceTag.innerHTML =  `${arrayItemsPrices[productIndex]} €`;   
 
-        let totalQuantityInCart = arrayQuantities.reduce(reducer);
-    
-        document.querySelector("#totalQuantity").innerHTML = totalQuantityInCart;
-    
-        let totalPriceOfCart = arrayItemsPrices.reduce(reducer);
-    
-        document.querySelector("#totalPrice").innerHTML = totalPriceOfCart;
+            let totalQuantityInCart = arrayQuantities.reduce(reducer);
+        
+            document.querySelector("#totalQuantity").innerHTML = totalQuantityInCart;
+        
+            let totalPriceOfCart = arrayItemsPrices.reduce(reducer);
+        
+            document.querySelector("#totalPrice").innerHTML = totalPriceOfCart;
 
-
-    })
+        })
+    };
 };
 
 // creating validation functions for each form element
 
-// function regarding first name, last name and city inputs
 let firstNameInput = document.getElementById("firstName");
 let firstNameError = document.getElementById("firstNameErrorMsg");
 let lastNameInput = document.getElementById("lastName");
 let lastNameError = document.getElementById("lastNameErrorMsg");
-let cityInput= document.getElementById("city")
-let cityError= document.getElementById("cityErrorMsg")
+let cityInput= document.getElementById("city");
+let cityError= document.getElementById("cityErrorMsg");
 
+function verifyInputs(){
+
+    testName(firstNameInput, firstNameError);
+    testName(lastNameInput, lastNameError);
+    testName(cityInput, cityError);
+    testEmail();
+    testAdress();
+};
+
+// function regarding first name, last name and city inputs
 function testName(node, errorNode) {
 
     if (/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/.test(node.value)) {
@@ -194,7 +214,6 @@ function testName(node, errorNode) {
 
 let emailInput = document.getElementById("email");
 let emailError = document.getElementById("emailErrorMsg")
-
 
 function testEmail(){
     if (/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(emailInput.value)){
@@ -215,7 +234,6 @@ function testEmail(){
 let addressInput = document.getElementById("address");
 let addressError = document.getElementById("addressErrorMsg")
 
-
 function testAdress(){
     if (/^[-'a-zA-Z0-9À-ÖØ-öø-ÿ\s]{3,}$/.test(addressInput.value)){
 
@@ -230,75 +248,76 @@ function testAdress(){
     }
 };
 
+
 // sending order
 
-let orderButton = document.getElementById("order")
+sendOrder();
 
-orderButton.addEventListener("click", function (event){
+function sendOrder(){
 
-    event.preventDefault();
+    let orderButton = document.getElementById("order");
 
-    // excecuting each regex verification individually to display error messages if needed
-    testName(firstNameInput, firstNameError);
-    testName(lastNameInput, lastNameError);
-    testName(cityInput, cityError);
-    testEmail();
-    testAdress();
-    
-    // verrifying every input and creating data to send order
-    if (testName(firstNameInput, firstNameError) && testName(lastNameInput, lastNameError) && testName(cityInput, cityError) && testEmail() && testAdress()) {
-        
-        let products = [];
+    orderButton.addEventListener("click", function (event){
 
-        for (let item of JSON.parse(localStorage.getItem("products"))){
+        event.preventDefault();
 
-            products.push(item.id);
+        // excecuting each regex verification individually to display error messages if needed
+
+        verifyInputs;
+
+        // verrifying every input and creating data to send order
+        if (testName(firstNameInput, firstNameError) && testName(lastNameInput, lastNameError) && testName(cityInput, cityError) && testEmail() && testAdress()) {
+            
+            let products = [];
+
+            for (let item of JSON.parse(localStorage.getItem("products"))){
+
+                products.push(item.id);
+
+            };
+
+            let orderToSend = {
+                contact: {
+                firstName: firstNameInput.value,
+                lastName: lastNameInput.value,
+                address: addressInput.value,
+                city: cityInput.value,
+                email: emailInput.value,
+                },
+                products,
+            };
+
+            // function to send order to the API
+
+            function send() {
+                fetch("http://localhost:3000/api/products/order", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json', 
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderToSend),
+                })
+                .then(function(res) {
+                if (res.ok) {
+                    return res.json();
+                }
+                })
+                .then(function(value) {
+                    localStorage.clear();
+                    window.location.href = "confirmation.html?id=" + value.orderId;
+                });
+            };
+
+            send();
+
+        } else{
+
+            console.log("erreur");
 
         };
-
-        let orderToSend = {
-            contact: {
-              firstName: firstNameInput.value,
-              lastName: lastNameInput.value,
-              address: addressInput.value,
-              city: cityInput.value,
-              email: emailInput.value,
-            },
-            products,
-          };
-
-        // function to send order to the API
-
-        function send() {
-            fetch("http://localhost:3000/api/products/order", {
-              method: "POST",
-              headers: {
-                'Accept': 'application/json', 
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(orderToSend),
-              })
-            .then(function(res) {
-              if (res.ok) {
-                return res.json();
-              }
-            })
-            .then(function(value) {
-                localStorage.clear();
-                window.location.href = "confirmation.html?id=" + value.orderId;
-            });
-        };
-
-        send();
-
-    } else{
-
-        console.log("erreur");
-
-    };
-
-});
-
+    });
+};
 
 
 
