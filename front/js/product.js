@@ -18,7 +18,7 @@ fetch( protocol + "://" + domain + "/api/products/" + id)
   .catch ((error) => {
     let container = document.querySelector(".item");
     container.innerHTML = "<article>Nous n'avons pas réussi à afficher les articles.<br> <br>Avez-vous bien lancé le serveur local (Port 3000) ? <br><br>Si le problème persiste, contactez-nous.</article>";
-    })
+  })
   .then(function (response) {
     return response.json();
   })
@@ -67,7 +67,7 @@ fetch( protocol + "://" + domain + "/api/products/" + id)
           altTxt: sofa.altTxt,
           name: sofa.name
 
-        }
+        };
         
           // if local storage is emty, we set the array in it
 
@@ -100,32 +100,15 @@ fetch( protocol + "://" + domain + "/api/products/" + id)
             arrayProductsInCart[productIndex].quantity = arrayProductsInCart[productIndex].quantity + productAdded.quantity;
             localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
 
-          } 
+          };
           
         };
-          
         console.log(arrayProductsInCart);
-            console.log(localStorage);
-
-      }
-
-  
-
-})
-
-
-
-
-
-
-
-
-
-
-
-
-    
-});
+        console.log(localStorage);
+      }; 
+    });
+  })
+;
 
 
 
